@@ -7,6 +7,9 @@ Keepfy calendar/agenda implementation inspired by wix [react-native-calendars](h
 This package implements a similar solution like `react-native-calendars`, but using
 typescript and react-hooks.
 
+### Install
+
+`yarn add @keepfy/react-native-calendars`
 
 ### Why
 
@@ -43,6 +46,6 @@ it has more features and options than this package
 is a 12 months list, `MonthList` can have more than 12 months.
 * This package focus is on `MonthList`, not on `Agenda`
     * If you look at the agenda implementation, you will see that it's just a fancy section list
-    with animations for `MontList`
+    with animations for `MonthList`
 * For now we will be depending on packages like `react-native-paper` and `react-native-typography`
 that we use on our app, in the near future we hope to remove these dependencies.
