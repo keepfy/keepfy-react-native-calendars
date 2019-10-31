@@ -3,12 +3,14 @@ import {
     StyleProp,
     StyleSheet,
     Text, TextStyle,
-    TouchableOpacity
+    TouchableOpacity,
+    View
 } from 'react-native'
 import { material } from 'react-native-typography'
 import { EventEmitter } from 'fbemitter'
 import { getDate } from 'date-fns'
 import DefaultColors from '../../lib/colors'
+import { T } from 'ramda'
 
 export type DayProps = {
     isHidden?: boolean
@@ -18,7 +20,7 @@ export type DayProps = {
     formatter?: (date: Date) => string
     day: Date
     /*
-     * An emitter is used here
+     * And emitter is used here
      * to avoid re-renders when handlers are changed
      * FIXME: this creates the problem of the 'disabled' click
      *  listeners not behaving correctly
@@ -27,22 +29,35 @@ export type DayProps = {
 }
 
 export const DAY_DIMENS = 32
+const SELECTED_EXTRA_RADIUS = 2
 
 const styles = StyleSheet.create({
-    container: {
-        width: DAY_DIMENS,
+    contentContainer: {
         height: DAY_DIMENS,
+        width: DAY_DIMENS,
+        overflow: 'visible',
         alignItems: 'center',
         justifyContent: 'center'
     },
-    markedCurrent: {
-        borderRadius: DAY_DIMENS,
-        backgroundColor: DefaultColors.markedCurrentDay
+    container: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'visible',
+        width: DAY_DIMENS,
+        height: DAY_DIMENS
     },
-    selectedDay: {
-        color: DefaultColors.markedCurrentDay
+    dayText: material.captionObject,
+    selectedMark: {
+        borderRadius: DAY_DIMENS + SELECTED_EXTRA_RADIUS,
+        backgroundColor: DefaultColors.markedCurrentDay,
+        position: 'absolute',
+        padding: (DAY_DIMENS / 2) + SELECTED_EXTRA_RADIUS
     }
 })
+
+// Oh, hi mark
+const Mark = React.memo(() => <View style={ styles.selectedMark } />, T)
 
 const Day = React.memo((props: DayProps) => {
     const {
@@ -66,42 +81,51 @@ const Day = React.memo((props: DayProps) => {
         }
     }, [emitter, day])
 
-    const isMarked = !isHidden && props.markedAsCurrent
+    const isMarkedAsToday = !isHidden && props.markedAsCurrent
     const isSelected = !isHidden && props.markedAsSelected
 
+    const renderMark = useCallback(() => {
+        if(!isSelected) {
+            return null
+        }
+
+        return <Mark />
+    }, [isSelected])
+
     return (
-        <TouchableOpacity
-            style={ [
-                styles.container,
-                isSelected
-                    ? styles.markedCurrent
-                    : null
-            ] }
-            onPress={
-                emitter
-                    ? handleOnPress
-                    : undefined
-            }
-            onLongPress={
-                emitter
-                    ? handleOnLongPress
-                    : undefined
-            }>
-            <Text
-                allowFontScaling={ false }
-                style={ [
-                    isSelected
-                        ? material.captionWhite
-                        : material.caption,
-                    isMarked && !isSelected
-                        ? styles.selectedDay
-                        : {},
-                    StyleSheet.flatten(props.textStyle)
-                ] }>
-                { isHidden ? '' : dayLabel }
-            </Text>
-        </TouchableOpacity>
+        <View style={ styles.container }>
+            { renderMark() }
+            <TouchableOpacity
+                style={ styles.contentContainer }
+                onPress={
+                    !isHidden && emitter
+                        ? handleOnPress
+                        : undefined
+                }
+                onLongPress={
+                    !isHidden && emitter
+                        ? handleOnLongPress
+                        : undefined
+                }>
+                <Text
+                    allowFontScaling={ false }
+                    style={ [
+                        styles.dayText,
+                        {
+                            color: isSelected
+                                ? DefaultColors.selectedDayTextColor
+                                : isMarkedAsToday
+                                    ? DefaultColors.todayTextColor
+                                    : DefaultColors.dayTextColor
+                        },
+                        StyleSheet.flatten(props.textStyle)
+                    ] }>
+                    { isHidden ? '' : dayLabel }
+                </Text>
+            </TouchableOpacity>
+        </View>
     )
 })
 
 export default Day
+

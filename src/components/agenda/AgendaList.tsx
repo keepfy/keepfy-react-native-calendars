@@ -6,7 +6,7 @@ import {
     Text,
     View
 } from 'react-native'
-import React, { useCallback } from 'react'
+import React from 'react'
 import { material } from 'react-native-typography'
 import {
     getDay,
@@ -23,7 +23,7 @@ export type AgendaListProps<T> = Pick<
     | 'onMomentumScrollEnd'
     | 'sections'
     | 'onEndReached'
->
+    >
 
 const styles = StyleSheet.create({
     sectionHeader: {
@@ -72,14 +72,12 @@ function AgendaList<T>(props: AgendaListProps<T>) {
         )
     }
 
-    const keyExtractor = useCallback((_: unknown, index: number) => index + '', [])
-
     return (
         <SectionList
             stickySectionHeadersEnabled
             sections={ props.sections }
             renderItem={ props.renderItem }
-            keyExtractor={ keyExtractor }
+            keyExtractor={ (_, index) => index + '' }
             showsVerticalScrollIndicator={ false }
             renderSectionHeader={ renderSectionHeader }
             onEndReached={ props.onEndReached }

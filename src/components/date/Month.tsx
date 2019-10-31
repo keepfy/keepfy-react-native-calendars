@@ -19,7 +19,6 @@ export type MonthProps = Pick<
 > & {
     style?: StyleProp<ViewStyle>
     monthDate: Date
-    width: number
 }
 
 const styles = StyleSheet.create({
@@ -69,7 +68,6 @@ const Month = React.memo((props: MonthProps) => {
     return (
         <View style={ [
             styles.container,
-            { width: props.width },
             StyleSheet.flatten(props.style)
         ] }>
             <WeekDayNames key='day-names' />
