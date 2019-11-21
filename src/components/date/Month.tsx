@@ -18,7 +18,7 @@ export type MonthProps = Pick<
     | 'emitter'
 > & {
     style?: StyleProp<ViewStyle>
-    monthDate: Date,
+    monthDate: Date
     forceExtraWeek?: boolean
 }
 

@@ -1,7 +1,16 @@
 {
   "root": true,
+  "parser": "@typescript-eslint/parser",
   "extends": [
     "keepfy",
     "plugin:import/typescript"
-  ]
+  ],
+  "plugins": [
+    "react-native",
+    "react-hooks"
+  ],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
 }

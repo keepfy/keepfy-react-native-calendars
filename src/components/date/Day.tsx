@@ -20,7 +20,7 @@ export type DayProps = {
     formatter?: (date: Date) => string
     day: Date
     /*
-     * And emitter is used here
+     * An emitter is used here
      * to avoid re-renders when handlers are changed
      * FIXME: this creates the problem of the 'disabled' click
      *  listeners not behaving correctly
