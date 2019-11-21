@@ -19,10 +19,13 @@ export type CalendarProps = Pick<
     | 'showExtraDates'
     | 'emitter'
 > & {
-    initialDate?: Date
+    initialDayDate?: Date
     minPastMonths?: number
     maxFutureMonths?: number
     onVisibleMonthChange?: (date: Date) => void
+    initialNumberToRender?: number
+    forceExtraWeekInAll?: boolean
+    measuredWidth?: number
 }
 
 const styles = StyleSheet.create({
@@ -40,16 +43,18 @@ const styles = StyleSheet.create({
     }
 })
 
-const Calendar = (props: CalendarProps) => {
+const keyExtractor = (_: unknown, index: number) => index + ''
+
+const Calendar = React.memo((props: CalendarProps) => {
     const {
         minPastMonths = 12,
         maxFutureMonths = 12,
         onVisibleMonthChange
     } = props
     const ref = useRef<FlatList<Date> | null>(null)
-    const [measuredWidth, setMeasuredWidth] = useState(-1)
+    const [measuredWidth, setMeasuredWidth] = useState(props.measuredWidth || -1)
     const [initial] = useState(
-        () => startOfMonth(props.initialDate || new Date()))
+        () => startOfMonth(props.initialDayDate || new Date()))
     const [past] = useState(
         () => subMonths(initial, minPastMonths))
 
@@ -82,11 +87,13 @@ const Calendar = (props: CalendarProps) => {
                 selectedDay={ props.selectedDay }
                 monthDate={ item }
                 emitter={ props.emitter }
+                forceExtraWeek={ props.forceExtraWeekInAll }
             />
         </View>
     ), [
         measuredWidth,
         handleMonthChange,
+        props.forceExtraWeekInAll,
         props.showExtraDates,
         props.currentDay,
         props.selectedDay,
@@ -113,15 +120,11 @@ const Calendar = (props: CalendarProps) => {
     }, [onVisibleMonthChange])
 
     const handleSize: ViewProps['onLayout'] = event => {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-        setMeasuredWidth(event.nativeEvent.layout.width)
+        if(measuredWidth <= 0) {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+            setMeasuredWidth(event.nativeEvent.layout.width)
+        }
     }
-
-    const keyExtractor = useCallback((_, index) => index + '', [])
-
-    const handleRef = useCallback((newRef: FlatList<Date> | null) => {
-        ref.current = newRef
-    }, [])
 
     const renderList = () => {
         if(measuredWidth <= 0) {
@@ -134,13 +137,11 @@ const Calendar = (props: CalendarProps) => {
 
         return (
             <FlatList
-                ref={ handleRef }
+                ref={ ref }
                 horizontal
                 pagingEnabled
-                viewabilityConfig={ {
-                    itemVisiblePercentThreshold: 40
-                } }
-                initialNumToRender={ 10 }
+                viewabilityConfig={ { itemVisiblePercentThreshold: 40 } }
+                initialNumToRender={ props.initialNumberToRender || 4 }
                 maxToRenderPerBatch={ 4 }
                 onViewableItemsChanged={ onViewableItemsChanged }
                 initialScrollIndex={ minPastMonths }
@@ -160,6 +161,6 @@ const Calendar = (props: CalendarProps) => {
             { renderList() }
         </View>
     )
-}
+})
 
 export default Calendar
