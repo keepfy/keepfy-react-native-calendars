@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { addDays, startOfWeek } from 'date-fns'
 import Day from './Day'
@@ -20,7 +20,7 @@ const dayOfWeekName = (day: Date) =>
     format(day, DateFormats.MONTH_WEEK_SHORT)
 
 const WeekDayNames = React.memo(() => {
-    const [initial] = useState(() => startOfWeek(new Date()))
+    const initial = useMemo(() => startOfWeek(new Date()), [])
 
     const days = useMemo(() =>
         times(day => addDays(initial, day), 7),

@@ -3,8 +3,10 @@ import pt from 'date-fns/locale/pt'
 import { parseISO } from 'date-fns'
 
 export enum DateFormats {
-    MONTH_WEEK_SHORT = 'eee',
-    MONTH_NAME_AND_YEAR = 'MMMM - yyyy',
+    WEEK_DAY_MONTH_DESCRIPTIVE = 'eee\',\' d \'de\' MMM',
+    YEAR = 'yyyy',
+    MONTH_OF_YEAR = 'MMMM \'de\' yyyy',
+    MONTH_WEEK_SHORT = 'eee'
 }
 
 const format = (

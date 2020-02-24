@@ -22,10 +22,13 @@ makes the code a little bit harder to type and deal with.
  - [x] Calendar list
  - [x] Current day marking
  - [x] Day selection
- - [ ] Markings on days
- - [ ] Arrows on week day names
+ - [ ] Customizations using context
+     - [ ] Arrows on week day names
+     - [ ] Markings on days
+ - [ ] Date picker like google agenda one
  - [ ] Documentation
  - [ ] Support i18n
+ - [ ] Usage example on README
  - [ ] Example app and gifs
  - [ ] Render and e2e tests
  - [ ] Support lazy loading a infinite stream of dates 
@@ -41,11 +44,11 @@ The package is a WIP, but here's our current keepfy agenda using this package:
 
 * We still recommend `react-native-calendars` instead of this package because
 it has more features and options than this package
+* If possible, consider enabling the [LayoutAnimation](https://facebook.github.io/react-native/docs/layoutanimation) flag, we rely on it
+for the `Calendar` component, and we don't know if not having it will break something.
 * RN < 60 compatibility is not a goal
-* The `MonthList` component is not a calendar, since the calendar definition
-is a 12 months list, `MonthList` can have more than 12 months.
-* This package focus is on `MonthList`, not on `Agenda`
+* This package focus is on `Calendar`, not on `Agenda`
     * If you look at the agenda implementation, you will see that it's just a fancy section list
-    with animations for `MonthList`
+    with animations for `Calendar`
 * For now we will be depending on packages like `react-native-paper` and `react-native-typography`
 that we use on our app, in the near future we hope to remove these dependencies.

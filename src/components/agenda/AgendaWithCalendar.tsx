@@ -1,15 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
 import AgendaList, { AgendaListProps } from './AgendaList'
-import MonthList, { MonthListProps } from '../date/MonthList'
 import useComponentDimensions from '../../hooks/useComponentDimensions'
 import { getWeeksInMonth } from 'date-fns'
 import { Surface } from 'react-native-paper'
+import Calendar, { CalendarProps } from '../calendar/Calendar'
+import { DAY_DIMENS } from '../date/Day'
 
 type Props<T> =
-    & MonthListProps
-    & AgendaListProps<T>
-    & { isCalendarOpen?: boolean }
+    & CalendarProps
+    & Omit<AgendaListProps<T>, 'itemHeight' | 'keyExtractor'>
+    & {
+        isCalendarOpen?: boolean
+        agendaItemHeight: number
+        agendaKeyExtractor: (item: T, index: number) => string
+    }
 
 const styles = StyleSheet.create({
     container: {
@@ -19,20 +24,20 @@ const styles = StyleSheet.create({
 
 const AnimatedSurface = Animated.createAnimatedComponent(Surface)
 
-function AgendaWithMonthList<T>(props: Props<T>) {
+function AgendaWithCalendar<T>(props: Props<T>) {
     const weekHeight = 40 // TODO: make this be a prop or be used on week component
 
     const [listSizes, onListLayout] = useComponentDimensions({
-        height: 400, // Enough to hide it initially
+        height: DAY_DIMENS * 6 + weekHeight, // Enough to hide it initially
         width: 0
     })
     const [monthListOpen] = useState(
         () => new Animated.Value(props.isCalendarOpen ? 1 : 0))
-    const [bottomWeek] = useState(
-        () => new Animated.Value(0))
     const [currentWeekCount, setCurrentWeekCount] = useState(
-        () => getWeeksInMonth(props.initialDate || new Date()))
+        () => getWeeksInMonth(props.initialDayDate || new Date()))
     const hasExtraWeek = currentWeekCount > 5
+    const [bottomWeek] = useState(
+        () => new Animated.Value(hasExtraWeek ? 0 : 1))
 
     useEffect(() => {
         const animation = Animated.spring(monthListOpen, {
@@ -124,16 +129,20 @@ function AgendaWithMonthList<T>(props: Props<T>) {
                          * This will basically cancel the parent
                          * translation of the extra week that some months
                          * have
+                         *
+                         * This is needed cuz we animate the extra week
+                         * while we animate the events list and the calendar
+                         * container
                          */
                         transform: [
                             { translateY: extraWeekTranslate }
                         ]
                     } }>
-                    <MonthList
+                    <Calendar
                         showExtraDates={ props.showExtraDates }
                         currentDay={ props.currentDay }
                         selectedDay={ props.selectedDay }
-                        initialDate={ props.initialDate }
+                        initialDayDate={ props.initialDayDate }
                         onVisibleMonthChange={ handleMonthChange }
                         emitter={ props.emitter }
                     />
@@ -141,6 +150,9 @@ function AgendaWithMonthList<T>(props: Props<T>) {
             </AnimatedSurface>
             <Animated.View style={ agendaListStyle }>
                 <AgendaList
+                    keyExtractor={ props.agendaKeyExtractor }
+                    initialDayDate={ props.initialDayDate }
+                    itemHeight={ props.agendaItemHeight }
                     sections={ props.sections }
                     onEndReached={ props.onEndReached }
                     renderItem={ props.renderItem }
@@ -150,4 +162,4 @@ function AgendaWithMonthList<T>(props: Props<T>) {
     )
 }
 
-export default AgendaWithMonthList
+export default AgendaWithCalendar

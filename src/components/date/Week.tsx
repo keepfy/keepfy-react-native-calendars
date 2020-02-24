@@ -22,9 +22,10 @@ export type WeekProps = Pick<DayProps, 'emitter'> & {
 
 const styles = StyleSheet.create({
     container: {
-        marginVertical: 7,
+        marginVertical: 3,
         flexDirection: 'row',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
+        overflow: 'visible'
     }
 })
 
@@ -53,7 +54,7 @@ const Week = React.memo((props: WeekProps) => {
 
     const daysToRender = useMemo(() => days.map(day => {
         const shouldShowExtraDates = showExtraDates
-                    || isSameMonth(day, month)
+            || isSameMonth(day, month)
 
         return (
             <Day

@@ -3,10 +3,10 @@ export {
 } from './components/agenda/AgendaList'
 export {
     default as AgendaWithMonthList
-} from './components/agenda/AgendaWithMonthList'
+} from './components/agenda/AgendaWithCalendar'
 export {
-    default as MonthList
-} from './components/date/MonthList'
+    default as Calendar
+} from './components/calendar/Calendar'
 export {
     default as Month
 } from './components/date/Month'

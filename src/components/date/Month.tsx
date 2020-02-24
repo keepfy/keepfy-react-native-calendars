@@ -19,7 +19,7 @@ export type MonthProps = Pick<
 > & {
     style?: StyleProp<ViewStyle>
     monthDate: Date
-    width: number
+    forceExtraWeek?: boolean
 }
 
 const styles = StyleSheet.create({
@@ -32,7 +32,9 @@ const styles = StyleSheet.create({
 const Month = React.memo((props: MonthProps) => {
     // To avoid new instances or re-instantiations
     const [monthStart] = useState(() => startOfMonth(props.monthDate))
-    const [weekCount] = useState(() => getWeeksInMonth(monthStart))
+    const [weekCount] = useState(() => props.forceExtraWeek
+        ? 6 // This is the max week a month can have
+        : getWeeksInMonth(monthStart))
 
     /*
      * Keep this one isolated here, to avoid re-renders
@@ -69,7 +71,6 @@ const Month = React.memo((props: MonthProps) => {
     return (
         <View style={ [
             styles.container,
-            { width: props.width },
             StyleSheet.flatten(props.style)
         ] }>
             <WeekDayNames key='day-names' />
